@@ -4,6 +4,7 @@ INCLUDE Inputmod.inc
 	
 .code
 	main proc
+	xor eax, eax
 	mov  eax, green
 	xor ebx, ebx
 	
