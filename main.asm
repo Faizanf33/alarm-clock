@@ -1,15 +1,6 @@
-INCLUDE irvine32.inc
-INCLUDE module.inc
+INCLUDE Irvine32.inc
+INCLUDE Inputmod.inc
 
-.data
-	hrstr BYTE "Enter hour: ", 0
-	minstr BYTE "Enter minute: ", 0
-	
-	
-	hr BYTE ?
-	mnt BYTE ?
-
-	laststr BYTE "Alarm set to ", 0
 	
 .code
 	main proc
