@@ -1,15 +1,3 @@
-; DATA SECTION AND A MACROS DEFIND HERE
-
-.data
-	hrstr BYTE "Enter hour: ", 0
-	minstr BYTE "Enter minute: ", 0	
-	
-	hr BYTE ?
-	mnt BYTE ?
-
-	laststr BYTE "Your alarm is set to ", 0
-
-
 ; MACRO FOR OUTPUT AND INPUT VALUE
 GETDATA MACRO string, var, opt
 	mov dl, 10
@@ -36,3 +24,35 @@ GETDATA MACRO string, var, opt
 
 	.ENDIF		
 ENDM
+
+FILEHANDLING MACRO
+                mov edx,offset filename
+                call open_file_Read_mode
+		mov handle,eax
+		mov edx,offset arr
+		mov ecx,lengthof arr
+		mov eax,handle
+		call Read_from_file
+		mov edx, OFFSET arr
+		call writestring
+ENDM
+
+open_file_Read_mode proc
+
+
+	INVOKE CREATEFILE, edx, GENERIC_read, NULL, NULL, open_existing, FILE_ATTRIBUTE_NORMAL, 0
+
+	ret
+
+open_file_Read_mode endp
+
+
+
+Read_from_file proc
+
+	INVOKE READFILE,eax,edx,ecx,Addr Bytes_Written,0
+
+
+	ret
+
+Read_from_file endp
