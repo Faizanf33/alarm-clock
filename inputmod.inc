@@ -3,7 +3,7 @@
   sysTime SYSTEMTIME <>
   consoleHandle DWORD ?
   colonStr BYTE ":",0
-  TheTimeIs BYTE "The Local Time Is ",0
+  TheTimeIs BYTE "The Local Time Is : ",0
   hrstr BYTE "Enter hour: ", 0
   minstr BYTE "Enter minute: ", 0
 
