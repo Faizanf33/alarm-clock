@@ -7,8 +7,8 @@ INCLUDE Inputmod.inc
 	xor eax, eax
 	mov  eax, green
 	xor ebx, ebx
-	
 	call SetTextColor
+	
         
         FILEHANDLING
         
@@ -16,6 +16,10 @@ INCLUDE Inputmod.inc
         call delay
         
         call clrscr
+        
+        sytime
+        
+        call crlf
         
 	GETDATA hrstr, hr, bh
 	

@@ -1,21 +1,61 @@
+
 .data
+	X = 20
+	Y = 4
+	sysTime SYSTEMTIME <>
+	consoleHandle DWORD ?
+	colonStr BYTE ":",0
+	TheTimeIs BYTE "The time is ",0
 	hrstr BYTE "Enter hour: ", 0
-	minstr BYTE "Enter minute: ", 0	
-	
+	minstr BYTE "Enter minute: ", 0
+
 	hr BYTE ?
 	mnt BYTE ?
 
 	laststr BYTE "Your alarm is set to ", 0
-        
+
         arr BYTE 500 DUP(0)
 	filename BYTE "data.txt",0
 	Bytes_Written DWORD ?
         handle DWORD ?
 
+
+;Macro For System Time
+SYTIME MACRO
+xor eax,eax
+xor edx,edx
+mov dh, Y
+mov dl, X
+call Gotoxy
+
+INVOKE GetLocalTime,ADDR sysTime
+mov edx,OFFSET TheTimeIs ; "Local Time Is : "
+call WriteString
+
+; Below Code Display the system time (hh:mm:ss).
+
+movzx eax,sysTime.wHour ; hours
+call WriteDec
+mov edx,offset colonStr ; ":"
+call WriteString
+
+movzx eax,sysTime.wMinute ; minutes
+call WriteDec
+mov edx,offset colonStr ; ":"
+call WriteString
+
+movzx eax,sysTime.wSecond ; seconds
+call WriteDec
+call Crlf
+call Crlf
+ENDM
+
+
+
 ; MACRO FOR OUTPUT AND INPUT VALUE
 GETDATA MACRO string, var, opt
-	mov dl, 10
-	mov dh, 5
+	mov dl, 20
+	mov dh, 6
 	call Gotoxy
 
 	mov edx, offset string
@@ -35,8 +75,9 @@ GETDATA MACRO string, var, opt
 		mov al, opt
 		call writedec
 		call crlf
+		call crlf
 
-	.ENDIF		
+	.ENDIF
 ENDM
 
 FILEHANDLING MACRO
