@@ -1,19 +1,6 @@
 INCLUDE Irvine32.inc
 INCLUDE Inputmod.inc
 
-.data
-	hrstr BYTE "Enter hour: ", 0
-	minstr BYTE "Enter minute: ", 0	
-	
-	hr BYTE ?
-	mnt BYTE ?
-
-	laststr BYTE "Your alarm is set to ", 0
-        
-        arr BYTE 500 DUP(0)
-	filename BYTE "data.txt",0
-	Bytes_Written DWORD ?
-        handle DWORD ?
         
 .code
 	main proc
