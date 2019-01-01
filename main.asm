@@ -17,7 +17,7 @@ INCLUDE Inputmod.inc
         
         call clrscr
         
-        sytime
+        LOCALTIME
         
         call crlf
         
