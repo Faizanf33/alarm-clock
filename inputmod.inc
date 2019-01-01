@@ -42,13 +42,11 @@ ENDM
 FILEHANDLING MACRO
                 mov edx,offset filename
                 INVOKE CREATEFILE, edx, GENERIC_read, NULL, NULL, open_existing, FILE_ATTRIBUTE_NORMAL, 0
-                ;call open_file_Read_mode
 		mov handle,eax
 		mov edx,offset arr
 		mov ecx,lengthof arr
 		mov eax,handle
 		INVOKE READFILE,eax,edx,ecx,Addr Bytes_Written,0
-		;call Read_from_file
 		mov edx, OFFSET arr
 		call writestring
 ENDM

@@ -15,6 +15,8 @@ INCLUDE Inputmod.inc
         mov eax, 5000
         call delay
         
+        call clrscr
+        
 	GETDATA hrstr, hr, bh
 	
 	GETDATA minstr, mnt, bh	
