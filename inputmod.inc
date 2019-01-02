@@ -13,16 +13,10 @@
 	; variables for user inputs
 	hr BYTE ?
 	mnt BYTE ?
-<<<<<<< HEAD
-flg dword 0
-	laststr BYTE "Your alarm is set to : ", 0
-
-  arr BYTE 500 DUP(0)
-=======
-
+        flg dword 0
+	
 	; variables for file handling
   	arr BYTE 500 DUP(0)
->>>>>>> e2e9ceb804641f19003cdc5b1643fa6cf82e547d
 	filename BYTE "data.txt",0
 	Bytes_Written DWORD ?
   	handle DWORD ?
@@ -102,19 +96,19 @@ FILEHANDLING MACRO
 ENDM
 CHECK MACRO ho,min,opt
 		mov flg,0
-		.IF(ho>12)
+		.IF(ho>23)
 		    add flg,1
 		.ENDIF
 		
-		.IF(min>60)
+		.IF(min>59)
 		    add flg,1
 		.ENDIF
 		
-		.IF(ho<1)
+		.IF(ho<0)
 		    add flg,1
 		.ENDIF
 		
-		.IF(min<1)
+		.IF(min<0)
 		    add flg,1 
 		.ENDIF
 ENDM
