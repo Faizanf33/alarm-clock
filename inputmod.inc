@@ -9,7 +9,7 @@
 
 	hr BYTE ?
 	mnt BYTE ?
-
+flg dword 0
 	laststr BYTE "Your alarm is set to : ", 0
 
   arr BYTE 500 DUP(0)
@@ -89,4 +89,22 @@ FILEHANDLING MACRO
 		INVOKE READFILE,eax,edx,ecx,Addr Bytes_Written,0
 		mov edx, OFFSET arr
 		call writestring
+ENDM
+CHECK MACRO ho,min,opt
+		mov flg,0
+		.IF(ho>12)
+		    add flg,1
+		.ENDIF
+		
+		.IF(min>60)
+		    add flg,1
+		.ENDIF
+		
+		.IF(ho<1)
+		    add flg,1
+		.ENDIF
+		
+		.IF(min<1)
+		    add flg,1 
+		.ENDIF
 ENDM
