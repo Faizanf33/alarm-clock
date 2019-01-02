@@ -5,7 +5,7 @@ INCLUDE Inputmod.inc
 .code
 	main proc
 	xor eax, eax
-	mov  eax, green
+	mov  eax,  black +(green + 10)
 	xor ebx, ebx
 	call SetTextColor
 	
@@ -17,7 +17,7 @@ INCLUDE Inputmod.inc
   L1:       
         call clrscr
         
-        sytime
+        LOCALTIME
         
         call crlf
 
