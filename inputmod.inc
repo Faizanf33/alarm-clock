@@ -3,6 +3,10 @@
 	sysTime SYSTEMTIME <>
 	consoleHandle DWORD ?
 	
+	sysHour DWORD ?
+	sysMin DWORD ?
+	sysSec DWORD ?
+	
 	; Strings to display
 	colonStr BYTE ":",0
 	TheTimeIs BYTE "The Local Time Is : ",0
@@ -24,33 +28,35 @@
 
 ; MACRO For Local System Time
 LOCALTIME MACRO
-  xor eax,eax
-  xor edx,edx
+	xor eax,eax
+	xor edx,edx
 
-  mov dh, 4
-  mov dl, 20
-  call Gotoxy
+	mov dh, 4
+	mov dl, 20
+	call Gotoxy
 
-  INVOKE GetLocalTime,ADDR sysTime
-  mov edx,OFFSET TheTimeIs ; "Local Time Is : "
-  call WriteString
+	INVOKE GetLocalTime,ADDR sysTime
+	mov edx,OFFSET TheTimeIs ; "Local Time Is : "
+	call WriteString
 
-  ; Below Code Display the system time (hh:mm:ss).
+	; Below Code Display the system time (hh:mm:ss).
 
-  movzx eax,sysTime.wHour ; hours
-  call WriteDec
-  mov edx,offset colonStr ; ":"
-  call WriteString
+	movzx eax,sysTime.wHour ; hours
+	mov sysHour, eax
+	call WriteDec
+	mov edx,offset colonStr ; ":"
+	call WriteString
 
-  movzx eax,sysTime.wMinute ; minutes
-  call WriteDec
-  mov edx,offset colonStr ; ":"
-  call WriteString
+	movzx eax,sysTime.wMinute ; minutes
+	mov sysSec, eax
+	call WriteDec
+	mov edx,offset colonStr ; ":"
+	call WriteString
 
-  movzx eax,sysTime.wSecond ; seconds
-  call WriteDec
-  call Crlf
-  call Crlf
+	movzx eax,sysTime.wSecond ; seconds
+	call WriteDec
+	call Crlf
+	call Crlf
 ENDM
 
 
@@ -84,31 +90,32 @@ GETDATA MACRO string, var, opt
 ENDM
 
 FILEHANDLING MACRO
-                mov edx,offset filename
-                INVOKE CREATEFILE, edx, GENERIC_read, NULL, NULL, open_existing, FILE_ATTRIBUTE_NORMAL, 0
-		mov handle,eax
-		mov edx,offset arr
-		mov ecx,lengthof arr
-		mov eax,handle
-		INVOKE READFILE,eax,edx,ecx,Addr Bytes_Written,0
-		mov edx, OFFSET arr
-		call writestring
+	mov edx,offset filename
+	INVOKE CREATEFILE, edx, GENERIC_read, NULL, NULL, open_existing, FILE_ATTRIBUTE_NORMAL, 0
+	mov handle,eax
+	mov edx,offset arr
+	mov ecx,lengthof arr
+	mov eax,handle
+	INVOKE READFILE,eax,edx,ecx,Addr Bytes_Written,0
+	mov edx, OFFSET arr
+	call writestring
 ENDM
+
 CHECK MACRO ho,min,opt
-		mov flg,0
-		.IF(ho>23)
-		    add flg,1
-		.ENDIF
-		
-		.IF(min>59)
-		    add flg,1
-		.ENDIF
-		
-		.IF(ho<0)
-		    add flg,1
-		.ENDIF
-		
-		.IF(min<0)
-		    add flg,1 
-		.ENDIF
+	mov flg,0
+	.IF(ho>23)
+	    add flg,1
+	.ENDIF
+
+	.IF(min>59)
+	    add flg,1
+	.ENDIF
+
+	.IF(ho<0)
+	    add flg,1
+	.ENDIF
+
+	.IF(min<0)
+	    add flg,1 
+	.ENDIF
 ENDM
