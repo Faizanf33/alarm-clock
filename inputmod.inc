@@ -1,25 +1,35 @@
-
 .data
-  sysTime SYSTEMTIME <>
-  consoleHandle DWORD ?
-  colonStr BYTE ":",0
-  TheTimeIs BYTE "The Local Time Is : ",0
-  hrstr BYTE "Enter hour: ", 0
-  minstr BYTE "Enter minute: ", 0
-
+	; system time variables
+	sysTime SYSTEMTIME <>
+	consoleHandle DWORD ?
+	
+	; Strings to display
+	colonStr BYTE ":",0
+	TheTimeIs BYTE "The Local Time Is : ",0
+	hrstr BYTE "Enter hour: ", 0
+	minstr BYTE "Enter minute: ", 0
+	laststr BYTE "Your alarm is set to ", 0
+	
+	; variables for user inputs
 	hr BYTE ?
 	mnt BYTE ?
+<<<<<<< HEAD
 flg dword 0
 	laststr BYTE "Your alarm is set to : ", 0
 
   arr BYTE 500 DUP(0)
+=======
+
+	; variables for file handling
+  	arr BYTE 500 DUP(0)
+>>>>>>> e2e9ceb804641f19003cdc5b1643fa6cf82e547d
 	filename BYTE "data.txt",0
 	Bytes_Written DWORD ?
-  handle DWORD ?
+  	handle DWORD ?
 
 
 ; MACRO For Local System Time
-SYTIME MACRO
+LOCALTIME MACRO
   xor eax,eax
   xor edx,edx
 
@@ -31,7 +41,7 @@ SYTIME MACRO
   mov edx,OFFSET TheTimeIs ; "Local Time Is : "
   call WriteString
 
-; Below Code Display the system time (hh:mm:ss).
+  ; Below Code Display the system time (hh:mm:ss).
 
   movzx eax,sysTime.wHour ; hours
   call WriteDec
