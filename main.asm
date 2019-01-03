@@ -62,7 +62,9 @@ INCLUDE Inputmod.inc
 	.ENDW
 	
 	.IF (sysMin > 55)
-		mov mnt, 0
+		mov al, 60
+		sub al, mnt
+		mov mnt, al
 		inc hr
 	
 	.ELSE
