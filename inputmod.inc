@@ -158,15 +158,17 @@ LEFTTIME proc
 
 	.ELSEIF (eax == sysHour && ebx < sysMin)
 		add eax, 23
-
+	
+	.ELSEIF (eax > sysHour)
+		dec eax
+	
 	.ENDIF
 
 	.IF (ebx < sysMin)
 		add ebx, 60
 
 	.ENDIF
-	
-	dec eax
+		
 	sub eax, sysHour
 	sub ebx, sysMin
 
