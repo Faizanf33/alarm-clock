@@ -1,4 +1,5 @@
 INCLUDE Irvine32.inc
+INCLUDE GraphWin.inc
 INCLUDE Inputmod.inc
 	
 .code
@@ -53,14 +54,24 @@ INCLUDE Inputmod.inc
 	
 	call clrscr
 	call LOCALTIME
-	PRINTBT
 
 	.WHILE (ebx > sysMin)
 		INVOKE PlaySound, OFFSET file, NULL, SND_FILENAME
+		INVOKE MessageBox, NULL, ADDR PopupText, ADDR PopupTitle, MB_OKCANCEL
+				
+		.IF (eax == 1)
+			jmp PASS			
+		
+		.ELSE
+			jmp STOP_ALARM
+
+		.ENDIF
+		
 		call LOCALTIME
 	
 	.ENDW
-	
+
+	PASS:
 	.IF (sysMin > 55)
 		mov al, 60
 		sub al, mnt
@@ -71,8 +82,10 @@ INCLUDE Inputmod.inc
 		add mnt, 5
 
 	.ENDIF
-
+	
 	jmp SNOOZE
+
+	STOP_ALARM:
 	
 	call crlf
 	exit

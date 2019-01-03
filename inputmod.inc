@@ -22,11 +22,11 @@ PlaySound PROTO,
 	; Strings to display
 	colonStr BYTE ":",0
 	TheTimeIs BYTE "SYSTEM TIME ",0
+	
+	firststr BYTE "SET ALARM(24-hour)", 0
 	hrstr BYTE "Enter hour: ", 0
 	minstr BYTE "Enter minute: ", 0
 	tleftstr BYTE "Time left until alarm: ", 0
-
-	btstr BYTE "[snooze]	[stop]", 0
 
 	; variables for user inputs
 	hr BYTE ?
@@ -47,12 +47,25 @@ PlaySound PROTO,
 	; system path for sound file
 	; change Alarm01 to Alarm02, 03, ..., 10
 	; for different sounds
-	file BYTE "c:\\Windows\media\Alarm01.wav"
+	file BYTE "c:\\Windows\media\Alarm01.wav", 0
+	
+	; variables for popup window
+	PopupTitle BYTE "Alarm Clock",0
+	PopupText  BYTE "	SNOOZE FOR 5 MINUTES", 0
+	       BYTE "WM_LBUTTONDOWN message",0
 
 ;::::::::::::: END OF DATA SECTION ::::::::::::::::
 
 ; MACRO FOR OUTPUT STRING AND INPUT VALUE
 GETDATA MACRO string, var
+
+	mov dl, 20
+	mov dh, 5
+	call Gotoxy
+
+	mov edx, offset firststr
+	call writestring
+
 	mov dl, 20
 	mov dh, 6
 	call Gotoxy
@@ -84,16 +97,6 @@ CHECK MACRO ho,min,opt
 	.ENDIF
 ENDM
 
-PRINTBT MACRO
-	mov dl, 20
-	mov dh, 6
-	call Gotoxy
-
-	mov edx, offset btstr
-	call writestring
-
-ENDM
-
 ;::::::::::::: START OF CODE SECTION ::::::::::::::::
 
 .code
@@ -116,7 +119,7 @@ LOCALTIME PROC
 	xor eax,eax
 	xor edx,edx
 
-	mov dh, 4
+	mov dh, 3
 	mov dl, 20
 	call Gotoxy
 
