@@ -64,6 +64,7 @@ INCLUDE Inputmod.inc
 		call LOCALTIME
 	
 	.ENDW
+
 	INVOKE MessageBox, NULL, ADDR PopupText, ADDR PopupTitle, MB_OKCANCEL
 
 	.IF (eax != 1)
