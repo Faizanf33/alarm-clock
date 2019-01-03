@@ -27,6 +27,7 @@ PlaySound PROTO,
 	hrstr BYTE "Enter hour: ", 0
 	minstr BYTE "Enter minute: ", 0
 	tleftstr BYTE "Time left until alarm: ", 0
+	invalidstr BYTE "INVALID TIME", 0
 
 	; variables for user inputs
 	hr BYTE ?
@@ -51,7 +52,7 @@ PlaySound PROTO,
 	
 	; variables for popup window
 	PopupTitle BYTE "Alarm Clock",0
-	PopupText  BYTE "	SNOOZE FOR 5 MINUTES", 0
+	PopupText  BYTE "     SNOOZE FOR 5 MINUTES", 0
 	       BYTE "WM_LBUTTONDOWN message",0
 
 ;::::::::::::: END OF DATA SECTION ::::::::::::::::
@@ -147,6 +148,16 @@ LOCALTIME PROC
 	call WriteDec
 	ret
 LOCALTIME ENDP
+
+INVALID PROC
+	mov dh, 7
+	mov dl, 20
+	call gotoxy
+	
+	mov edx, offset invalidstr
+	call writestring
+	ret
+INVALID ENDP
 
 LEFTTIME proc
 	xor eax, eax

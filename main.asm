@@ -30,6 +30,9 @@ INCLUDE Inputmod.inc
 	
 	; if users enter wrong time
 	.IF(flg > 0)
+		call INVALID
+		mov eax, 1500
+		call delay
 		call clrscr	
 		jmp RETRY
 
@@ -57,21 +60,17 @@ INCLUDE Inputmod.inc
 
 	.WHILE (ebx > sysMin)
 		INVOKE PlaySound, OFFSET file, NULL, SND_FILENAME
-		INVOKE MessageBox, NULL, ADDR PopupText, ADDR PopupTitle, MB_OKCANCEL
-				
-		.IF (eax == 1)
-			jmp PASS			
-		
-		.ELSE
-			jmp STOP_ALARM
-
-		.ENDIF
 		
 		call LOCALTIME
 	
 	.ENDW
+	INVOKE MessageBox, NULL, ADDR PopupText, ADDR PopupTitle, MB_OKCANCEL
 
-	PASS:
+	.IF (eax != 1)
+		jmp STOP_ALARM
+
+	.ENDIF
+
 	.IF (sysMin > 55)
 		mov al, 60
 		sub al, mnt
