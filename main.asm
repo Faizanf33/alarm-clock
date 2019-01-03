@@ -4,37 +4,65 @@ INCLUDE Inputmod.inc
 .code
 	main proc
 	xor eax, eax
-	mov  eax,  black +(green + 10)
 	xor ebx, ebx
+
+	mov  eax,  black +(green + 10)
 	call SetTextColor
 	
         
-        FILEHANDLING
+        call WELCOMESCR
         
         mov eax, 2000
         call delay
-  L1:       
-        call clrscr
-        
+	call clrscr
+	
+  	RETRY:       
         call LOCALTIME
         
         call crlf
 
-	GETDATA hrstr, hr, bh
+	GETDATA hrstr, hr
 	
-	GETDATA minstr, mnt, bh	
+	GETDATA minstr, mnt
 	
 	CHECK hr,mnt,bh
+	
+	; if users enter wrong time
+	.IF(flg > 0)
+		call clrscr	
+		jmp RETRY
 
-	.IF(flg>0)
-	   jmp L1
 	.ENDIF
 	
-	GETDATA laststr, hr, mnt
-	
+	SNOOZE:
+	call clrscr
 	call LEFTTIME
 	
-	INVOKE PlaySound, OFFSET file, NULL, SND_FILENAME
+	.WHILE(ebx > 0)
+		call LOCALTIME
+		call LEFTTIME
+	        mov eax, 300
+		call delay
+	.ENDW
+	
+	mov eax, green
+	call SetTextColor
+
+	mov ebx, sysMin
+	inc ebx
+	
+	call clrscr
+	call LOCALTIME
+	PRINTBT
+
+	.WHILE (ebx > sysMin)
+		INVOKE PlaySound, OFFSET file, NULL, SND_FILENAME
+		call LOCALTIME
+	
+	.ENDW
+	
+	add mnt, 5	
+	jmp SNOOZE
 	
 	call crlf
 	exit

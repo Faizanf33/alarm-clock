@@ -1,7 +1,7 @@
 ; This file contains data section,
-; prototypes, macros, libraries
-; and procedures required for 
-; 'main.asm' file
+; code section, procedures, 
+; prototypes, macros, and libraries
+; required for "main.asm" file
 
 INCLUDELIB Winmm.lib
 
@@ -10,7 +10,7 @@ PlaySound PROTO,
         hmod:DWORD, 
         fdwSound:DWORD
 
-
+;::::::::::::: START OF DATA SECTION ::::::::::::::::
 .data
 	; system time variables
 	sysTime SYSTEMTIME <>
@@ -21,11 +21,12 @@ PlaySound PROTO,
 	
 	; Strings to display
 	colonStr BYTE ":",0
-	TheTimeIs BYTE "CURRENT SYSTEM TIME -> ",0
+	TheTimeIs BYTE "SYSTEM TIME ",0
 	hrstr BYTE "Enter hour: ", 0
 	minstr BYTE "Enter minute: ", 0
-	laststr BYTE "Your alarm is set to ", 0
 	tleftstr BYTE "Time left until alarm: ", 0
+	
+	btstr BYTE "[snooze]	[exit]", 0
 	
 	; variables for user inputs
 	hr BYTE ?
@@ -46,14 +47,12 @@ PlaySound PROTO,
 	; system path for sound file
 	; change Alarm01 to Alarm02, 03, ..., 10
 	; for different sounds
-	file BYTE "c:\\Windows\media\Alarm05.wav"
+	file BYTE "c:\\Windows\media\Alarm01.wav"
 	
-	; remaining time variables
-	rmHour DWORD ?
-	rmMin DWORD ?
+;::::::::::::: END OF DATA SECTION ::::::::::::::::
 
-; MACRO FOR OUTPUT AND INPUT VALUE
-GETDATA MACRO string, var, opt
+; MACRO FOR OUTPUT STRING AND INPUT VALUE
+GETDATA MACRO string, var
 	mov dl, 20
 	mov dh, 6
 	call Gotoxy
@@ -61,36 +60,8 @@ GETDATA MACRO string, var, opt
 	mov edx, offset string
 	call writestring
 
-	.IF (opt == 0)
-		call readint
-		mov var, al
-
-	.ELSE
-		mov al, var
-		call writedec
-
-		mov al, ':'
-		call writechar
-
-		mov al, opt
-		call writedec
-		call crlf
-		call crlf
-
-	.ENDIF
-ENDM
-
-; MACRO For filehandling
-FILEHANDLING MACRO
-	mov edx,offset filename
-	INVOKE CREATEFILE, edx, GENERIC_read, NULL, NULL, open_existing, FILE_ATTRIBUTE_NORMAL, 0
-	mov handle,eax
-	mov edx,offset arr
-	mov ecx,lengthof arr
-	mov eax,handle
-	INVOKE READFILE,eax,edx,ecx,Addr Bytes_Written,0
-	mov edx, OFFSET arr
-	call writestring
+	call readint
+	mov var, al
 ENDM
 
 ; Check user input values
@@ -113,73 +84,101 @@ CHECK MACRO ho,min,opt
 	.ENDIF
 ENDM
 
+PRINTBT MACRO
+	mov dl, 20
+	mov dh, 6
+	call Gotoxy
+	
+	mov edx, offset btstr
+	call writestring
+
+ENDM	
+
+
 .code
-	LOCALTIME PROC
-		xor eax,eax
-		xor edx,edx
+WELCOMESCR PROC
+	mov edx, offset filename
+	INVOKE CREATEFILE, edx, GENERIC_read, NULL, NULL, open_existing, FILE_ATTRIBUTE_NORMAL, 0
+	mov handle, eax
+	mov edx, offset arr
+	mov ecx, lengthof arr
+	mov eax, handle
+	INVOKE READFILE, eax, edx, ecx, Addr Bytes_Written, 0
+	mov edx, OFFSET arr
+	call writestring
+	
+	ret
+WELCOMESCR ENDP
 
-		mov dh, 4
-		mov dl, 20
-		call Gotoxy
+LOCALTIME PROC
+	xor eax,eax
+	xor edx,edx
 
-		INVOKE GetLocalTime,ADDR sysTime
-		mov edx,OFFSET TheTimeIs ; "Local Time Is : "
-		call WriteString
+	mov dh, 4
+	mov dl, 20
+	call Gotoxy
 
-		; Below Code Display the system time (hh:mm:ss).
+	INVOKE GetLocalTime,ADDR sysTime
+	mov edx,OFFSET TheTimeIs ; "Local Time Is : "
+	call WriteString
 
-		movzx eax,sysTime.wHour ; hours
-		mov sysHour, eax
-		call WriteDec
-		mov edx,offset colonStr ; ":"
-		call WriteString
+	; Below Code Display the system time (hh:mm:ss).
 
-		movzx eax,sysTime.wMinute ; minutes
-		mov sysMin, eax
-		call WriteDec
-		mov edx,offset colonStr ; ":"
-		call WriteString
+	movzx eax,sysTime.wHour ; hours
+	mov sysHour, eax
+	call WriteDec
+	mov edx,offset colonStr ; ":"
+	call WriteString
 
-		movzx eax,sysTime.wSecond ; seconds
-		call WriteDec
-		ret		
-	LOCALTIME ENDP
+	movzx eax,sysTime.wMinute ; minutes
+	mov sysMin, eax
+	call WriteDec
+	mov edx,offset colonStr ; ":"
+	call WriteString
 
-	LEFTTIME proc
-		xor eax, eax
-		xor ebx, ebx
-		xor edx, edx
-		
-		mov al, hr
-		mov bl, mnt
-		
-		.IF (eax < sysHour)
-			add eax, 23
-			
-		.ENDIF
-		
-		.IF (ebx < sysMin)
-			add ebx, 59
-		
-		.ENDIF
-		
-		sub eax, sysHour		
-		sub ebx, sysMin
+	movzx eax,sysTime.wSecond ; seconds
+	call WriteDec
+	ret		
+LOCALTIME ENDP
 
-		mov dh, 7
-		mov dl, 20
-		call gotoxy
+LEFTTIME proc
+	xor eax, eax
+	xor ebx, ebx
+	xor edx, edx
 
-		mov edx, offset tleftstr
-		call writestring
-		call writedec
-		mov eax, 'h'
-		call writechar
-		mov eax, ebx
-		call writedec
-		mov eax, 'm'
-		call writechar
+	mov al, hr
+	mov bl, mnt
 
-		ret	
-	LEFTTIME ENDP
+	.IF (eax < sysHour)
+		add eax, 23
+
+	.ELSEIF (eax == sysHour && ebx < sysMin)
+		add eax, 23
+
+	.ENDIF
+
+	.IF (ebx < sysMin)
+		add ebx, 59
+
+	.ENDIF
+
+	sub eax, sysHour		
+	sub ebx, sysMin
+
+	mov dh, 7
+	mov dl, 20
+	call gotoxy
+
+	mov edx, offset tleftstr
+	call writestring
+	call writedec
+	mov eax, 'h'
+	call writechar
+	mov eax, ebx
+	call writedec
+	mov eax, 'm'
+	call writechar
+
+	ret	
+LEFTTIME ENDP
 	
