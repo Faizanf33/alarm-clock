@@ -162,10 +162,11 @@ LEFTTIME proc
 	.ENDIF
 
 	.IF (ebx < sysMin)
-		add ebx, 59
+		add ebx, 60
 
 	.ENDIF
-
+	
+	dec eax
 	sub eax, sysHour
 	sub ebx, sysMin
 
