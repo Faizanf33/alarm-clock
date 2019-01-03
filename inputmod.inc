@@ -26,7 +26,7 @@ PlaySound PROTO,
 	minstr BYTE "Enter minute: ", 0
 	tleftstr BYTE "Time left until alarm: ", 0
 	
-	btstr BYTE "[snooze]	[exit]", 0
+	btstr BYTE "[snooze]	[stop]", 0
 	
 	; variables for user inputs
 	hr BYTE ?

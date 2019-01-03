@@ -61,7 +61,15 @@ INCLUDE Inputmod.inc
 	
 	.ENDW
 	
-	add mnt, 5	
+	.IF (sysMin > 55)
+		mov mnt, 0
+		inc hr
+	
+	.ELSE
+		add mnt, 5
+
+	.ENDIF
+
 	jmp SNOOZE
 	
 	call crlf
