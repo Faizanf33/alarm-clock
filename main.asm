@@ -42,19 +42,20 @@ INCLUDE Inputmod.inc
 	call clrscr
 	call LEFTTIME
 	
-	.WHILE(ebx > 0)
+	WAITING:
 		call LOCALTIME
 		call LEFTTIME
+		mov eax, 300
+		call delay
+
 		mov bl, mnt
 		mov al, hr
 		.IF (sysMin == bl && sysHour == al)
 			jmp TIMECHECK
+		.ELSE
+			jmp WAITING
 		.ENDIF
-
-		mov eax, 300
-		call delay
-	.ENDW
-	
+			
 	TIMECHECK:
 	mov eax, green
 	call SetTextColor
