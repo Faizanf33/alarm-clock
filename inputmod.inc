@@ -16,11 +16,10 @@ PlaySound PROTO,
 	sysTime SYSTEMTIME <>
 	consoleHandle DWORD ?
 
-	sysHour DWORD ?
-	sysMin DWORD ?
+	sysHour BYTE ?
+	sysMin BYTE ?
 
 	; Strings to display
-	colonStr BYTE ":",0
 	TheTimeIs BYTE "SYSTEM TIME ",0
 	
 	firststr BYTE "SET ALARM(24-hour)", 0
@@ -124,27 +123,27 @@ LOCALTIME PROC
 	mov dl, 20
 	call Gotoxy
 
-	INVOKE GetLocalTime,ADDR sysTime
+	INVOKE GetLocalTime, ADDR sysTime
 	mov edx,OFFSET TheTimeIs             ; "Local Time Is : "
 	call WriteString
 
 	; Below Code Display the system time (hh:mm:ss).
 
-	movzx eax,sysTime.wHour              ; hours
-	mov sysHour, eax
+	movzx eax, sysTime.wHour              ; hours
+	mov sysHour, al
 	call WriteDec
 
-	mov edx,offset colonStr              ; ":"
-	call WriteString
+	mov eax, ':'
+	call WriteChar
 
-	movzx eax,sysTime.wMinute ; minutes
-	mov sysMin, eax
+	movzx eax, sysTime.wMinute ; minutes
+	mov sysMin, al
 	call WriteDec
 
-	mov edx,offset colonStr              ; ":"
-	call WriteString
+	mov eax, ':'
+	call WriteChar
 
-	movzx eax,sysTime.wSecond            ; seconds
+	movzx eax, sysTime.wSecond            ; seconds
 	call WriteDec
 	ret
 LOCALTIME ENDP
@@ -167,24 +166,24 @@ LEFTTIME proc
 	mov al, hr
 	mov bl, mnt
 
-	.IF (eax < sysHour)
+	.IF (al < sysHour)
 		add eax, 23
 
-	.ELSEIF (eax == sysHour && ebx < sysMin)
-		add eax, 23
+	.ENDIF
 	
-	.ELSEIF (eax > sysHour)
-		dec eax
+	.IF (al == sysHour && bl <= sysMin)
+		add eax, 23
 	
 	.ENDIF
-
-	.IF (ebx < sysMin)
+	
+	.IF (al > sysHour && bl <= sysMin)
+		dec eax
 		add ebx, 60
-
+	
 	.ENDIF
 		
-	sub eax, sysHour
-	sub ebx, sysMin
+	sub al, sysHour
+	sub bl, sysMin
 
 	mov dh, 7
 	mov dl, 20
@@ -199,6 +198,5 @@ LEFTTIME proc
 	call writedec
 	mov eax, 'm'
 	call writechar
-
 	ret
 LEFTTIME ENDP

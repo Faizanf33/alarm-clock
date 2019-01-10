@@ -13,7 +13,7 @@ INCLUDE Inputmod.inc
         
         call WELCOMESCR
         
-        mov eax, 2000
+        mov eax, 3000
         call delay
 	call clrscr
 	
@@ -45,20 +45,28 @@ INCLUDE Inputmod.inc
 	.WHILE(ebx > 0)
 		call LOCALTIME
 		call LEFTTIME
-	        mov eax, 300
+		mov bl, mnt
+		mov al, hr
+		.IF (sysMin == bl && sysHour == al)
+			jmp TIMECHECK
+		.ENDIF
+
+		mov eax, 300
 		call delay
 	.ENDW
 	
+	TIMECHECK:
 	mov eax, green
 	call SetTextColor
+	xor ebx, ebx
 
-	mov ebx, sysMin
+	mov bl, sysMin
 	inc ebx
 	
 	call clrscr
 	call LOCALTIME
 
-	.WHILE (ebx > sysMin)
+	.WHILE (bl > sysMin)
 		INVOKE PlaySound, OFFSET file, NULL, SND_FILENAME
 		
 		call LOCALTIME
