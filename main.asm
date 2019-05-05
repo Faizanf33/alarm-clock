@@ -13,7 +13,7 @@ INCLUDE Inputmod.inc
         
         call WELCOMESCR
         
-        mov eax, 2000
+        mov eax, 5000
         call delay
 	call clrscr
 	
@@ -65,7 +65,7 @@ INCLUDE Inputmod.inc
 	
 	.ENDW
 
-	INVOKE MessageBox, NULL, ADDR PopupText, ADDR PopupTitle, MB_OKCANCEL
+	;INVOKE MessageBox, NULL, ADDR PopupText, ADDR PopupTitle, MB_OKCANCEL
 
 	.IF (eax != 1)
 		jmp STOP_ALARM
