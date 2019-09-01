@@ -12,12 +12,8 @@ INCLUDE Inputmod.inc
 	
         
         call WELCOMESCR
-        
-<<<<<<< HEAD
         mov eax, 5000
-=======
         mov eax, 3000
->>>>>>> e3048e54ec32c1fe17a0222c6f5281b08321b873
         call delay
 	call clrscr
 	
